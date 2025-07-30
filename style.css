@@ -221,6 +221,27 @@ body.dark #main {
 body.dark #panel {
     background: #232927 !important;
 }
+@media (max-width: 768px) {
+  #panel {
+    flex-direction: column;
+    height: auto;
+  }
+
+  #ptop {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .elem h2 {
+    font-size: 1rem;
+  }
+
+  .elem .box {
+    font-size: 1.2rem;
+    padding: 6px 12px;
+  }
+}
 
 body.dark #ptop {
     background: #4c6153 !important;
