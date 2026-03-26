@@ -1,4 +1,4 @@
-var timer = 6;
+var timer = 60;
 var score = 0;
 var hitrn = 0;
 var bubblesCount = 180;
@@ -15,36 +15,57 @@ function getnewhit() {
 
 function makebubble() {
     var clutter = "";
-    for (var i = 1; i <= bubblesCount; i++) {
+    var pbtm = document.querySelector("#pbtm");
+    var width = pbtm.offsetWidth;
+    var height = pbtm.offsetHeight;
+
+    // dynamically calculate bubbles to prevent top/bottom spilling
+    var isMobile = window.innerWidth <= 768;
+    var bubbleSize = isMobile ? 48 : 65; // bubble width/height + gap
+
+    var bubblesPerRow = Math.floor(width / bubbleSize);
+    var rows = Math.floor(height / bubbleSize);
+    var computedCount = (bubblesPerRow * rows) || bubblesCount;
+
+    for (var i = 1; i <= computedCount; i++) {
         var rn = Math.floor(Math.random() * 10);
-        clutter += `<div class="bubble">${rn}</div>`;
+        // Staggered animation delay for beautiful loading
+        var delay = Math.floor(Math.random() * 20);
+        clutter += `<div class="bubble" style="--i: ${delay}">${rn}</div>`;
     }
-    document.querySelector("#pbtm").innerHTML = clutter;
+    pbtm.innerHTML = clutter;
 }
 
 function runtimer() {
     var timerinterval = setInterval(function () {
         if (timer > 0) {
             timer--;
-            document.querySelector("#timervalue").textContent = timer;
+            var timerEl = document.querySelector("#timervalue");
+            timerEl.textContent = timer;
+
+            if (timer <= 10 && timer > 0) {
+                timerEl.style.color = "#ef4444"; // Highlight red when time is low
+            } else {
+                timerEl.style.color = "";
+            }
         } else {
             clearInterval(timerinterval);
             updateHighScore(score);
             document.querySelector("#pbtm").innerHTML = `
-                <center>
-                    <h1>Time's up!</h1>
-                    <br>
-                    <div id="finalscore">Your final score is: ${score}</div>
-                    <br>
-                    <button id="tryAgainBtn" style="padding:0.7em 2em;font-size:1.1rem;border:none;border-radius:8px;background:#699965;color:#fff;cursor:pointer;transition:background 0.2s;">Try Again</button>
-                </center>
+                <div class="game-over-screen">
+                    <h1 class="bounce-in">Time's up!</h1>
+                    <div id="finalscore" class="fade-in">Your final score is: <span class="highlight">${score}</span></div>
+                    <button id="tryAgainBtn" class="btn btn-primary pop-in">Play Again</button>
+                </div>
             `;
-            
+
             document.getElementById("tryAgainBtn").addEventListener("click", function () {
                 timer = startTime;
                 score = 0;
                 document.querySelector("#scorevalue").textContent = score;
-                document.querySelector("#timervalue").textContent = timer;
+                var timerEl = document.querySelector("#timervalue");
+                timerEl.textContent = timer;
+                timerEl.style.color = "";
                 runtimer();
                 makebubble();
                 getnewhit();
@@ -66,8 +87,8 @@ function updateHighScore(newScore) {
     }
 }
 
-document.querySelector("#pbtm")
-    .addEventListener("click", function (dets) {
+document.querySelector("#pbtm").addEventListener("click", function (dets) {
+    if (dets.target.classList.contains('bubble')) {
         var clickedbubble = Number(dets.target.textContent);
         if (clickedbubble === hitrn) {
             getnewscore();
@@ -76,20 +97,25 @@ document.querySelector("#pbtm")
             getnewhit();
         }
         else {
-            alert("Wrong bubble clicked!");
+            // Instead of an annoying alert, use a CSS shake animation to give nice feedback
+            dets.target.classList.add("wrong-click");
+            dets.target.addEventListener('animationend', () => {
+                dets.target.classList.remove("wrong-click");
+            });
         }
-    });
+    }
+});
 
 
 document.addEventListener("DOMContentLoaded", function () {
     var landing = document.getElementById("landing");
     var main = document.getElementById("main");
     var playBtn = document.getElementById("playBtn");
+
     if (playBtn) {
         playBtn.addEventListener("click", function () {
             landing.classList.add("hidden");
             main.classList.remove("hidden");
-            // You can also start your game logic here if needed
             timer = startTime;
             score = 0;
             document.querySelector("#scorevalue").textContent = score;
@@ -101,19 +127,34 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
-
 document.addEventListener("DOMContentLoaded", function () {
     var themeToggle = document.getElementById("themeToggle");
     var body = document.body;
+
+    // Check local storage for theme preference to remember it
+    if (localStorage.getItem('bubbleTheme') === 'dark') {
+        body.classList.add('dark');
+        updateThemeButton(true);
+    }
+
     if (themeToggle) {
         themeToggle.addEventListener("click", function () {
             body.classList.toggle("dark");
-            if (body.classList.contains("dark")) {
-                themeToggle.textContent = "Switch to Light Theme";
-            } else {
-                themeToggle.textContent = "Switch to Dark Theme";
-            }
+            const isDark = body.classList.contains("dark");
+
+            localStorage.setItem('bubbleTheme', isDark ? 'dark' : 'light');
+            updateThemeButton(isDark);
         });
+    }
+
+    function updateThemeButton(isDark) {
+        const icon = isDark
+            ? `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`
+            : `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
+
+        if (themeToggle) {
+            themeToggle.innerHTML = `${icon} <span>${isDark ? 'Light Theme' : 'Dark Theme'}</span>`;
+        }
     }
 });
 
@@ -123,6 +164,6 @@ window.addEventListener("load", function () {
         loader.classList.add("hide");
         setTimeout(function () {
             loader.style.display = "none";
-        }, 700); // matches the CSS transition
+        }, 700);
     }
 });

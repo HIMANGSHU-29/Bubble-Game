@@ -3,48 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Bubble Pop - Premium</title>
+    <!-- Modern Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+    <!-- Animated Background Blobs -->
+    <div class="bg-animated">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
 
+    <!-- Page Loader -->
     <div id="pageloader">
         <div class="bubble-loader"></div>
     </div>
+
+    <!-- Landing Screen -->
     <div id="landing">
-        <h1 id="landing-title">Welcome to Bubble Game!</h1>
-        <p>Test your reflexes. Click the correct bubble as fast as you can before time runs out!</p>
-        <button id="themeToggle">Switch to Dark Theme</button>
-        <button id="playBtn">Play Game</button>
+        <div class="glass-card hero-card">
+            <h1 id="landing-title">Bubble <span class="gradient-text">Pop</span></h1>
+            <p>Test your reflexes! Smash the bubble that matches the <strong>Target</strong> number before time runs out.</p>
+            <div class="controls">
+                <button id="themeToggle" class="btn btn-secondary">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                    <span>Dark Theme</span>
+                </button>
+                <button id="playBtn" class="btn btn-primary">Play Game</button>
+            </div>
+        </div>
     </div>
-    <div id="main">
-        <div id="panel">
+
+    <!-- Main Game Area -->
+    <div id="main" class="hidden">
+        <div id="panel" class="glass-card main-panel">
             <div id="ptop">
-                <div class="lm">
-                    <h2>Hit</h2>
-                    <div id="hitvalue" class="box">9</div>
+                <div class="stat-group">
+                    <h2>Target</h2>
+                    <div id="hitvalue" class="box glow-box primary-glow">9</div>
                 </div>
-                <div class="lm">
-                    <h2>Time Left</h2>
-                    <div id="timervalue" class="box">60</div>
+                <div class="divider"></div>
+                <div class="stat-group">
+                    <h2>Timer</h2>
+                    <div id="timervalue" class="box glow-box warning-glow">60</div>
                 </div>   
-                <div class="lm">
+                <div class="divider"></div>
+                <div class="stat-group">
                     <h2>Score</h2>
-                    <div id="scorevalue" class="box">0</div>
+                    <div id="scorevalue" class="box glow-box success-glow">0</div>
                 </div>
-                <div class="lm">
+                <div class="divider"></div>
+                <div class="stat-group">
                     <h2>High Score</h2>
                     <div id="highscorevalue" class="box">0</div>
                 </div>
             </div>
-            <div id="pbtm">
-                
-
+            
+            <div id="pbtm-container">
+                <div id="pbtm">
+                    <!-- Bubbles will be injected here via JavaScript -->
+                </div>
             </div>
         </div>
-
     </div>
+    
     <script src="script.js"></script>
 </body>
 </html>
